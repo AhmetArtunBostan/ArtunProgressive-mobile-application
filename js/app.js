@@ -168,72 +168,62 @@ const networkManager = new NetworkManager();
 // Network Mode Management
 class NetworkModeManager {
     constructor() {
-        this.modeSwitch = document.getElementById('networkModeSwitch');
-        this.modeLabel = this.modeSwitch.nextElementSibling;
-        this.isOnline = true;
+        this.modeButton = document.querySelector('.online-mode');
+        this.offlineNotice = document.getElementById('offlineNotice');
+        this.isManualOffline = false;
         this.initializeEventListeners();
-        this.createBubbles();
     }
 
     initializeEventListeners() {
-        this.modeSwitch.addEventListener('click', () => this.toggleNetworkMode());
-        
+        // Online/Offline mode button click handler
+        this.modeButton.addEventListener('click', () => {
+            this.isManualOffline = !this.isManualOffline;
+            this.updateNetworkStatus();
+        });
+
         // Listen for actual network changes
         window.addEventListener('online', () => {
-            if (!this.isOnline) {
-                this.toggleNetworkMode(true);
+            if (!this.isManualOffline) {
+                this.updateNetworkStatus();
             }
         });
         
         window.addEventListener('offline', () => {
-            if (this.isOnline) {
-                this.toggleNetworkMode(true);
-            }
+            this.updateNetworkStatus();
         });
+
+        // Initial status check
+        this.updateNetworkStatus();
     }
 
-    toggleNetworkMode(isAutomatic = false) {
-        this.isOnline = !this.isOnline;
+    updateNetworkStatus() {
+        const isOnline = !this.isManualOffline && navigator.onLine;
         
-        // Update UI
-        this.modeSwitch.classList.toggle('offline', !this.isOnline);
-        this.modeLabel.textContent = this.isOnline ? 'Online Mode' : 'Offline Mode';
+        // Update button appearance
+        this.modeButton.classList.toggle('offline', !isOnline);
+        this.modeButton.innerHTML = isOnline ? 
+            '<i class="fas fa-wifi"></i>' :
+            '<i class="fas fa-wifi-slash"></i>';
+        this.modeButton.title = isOnline ? 'Switch to Offline Mode' : 'Switch to Online Mode';
+        
+        // Update offline notice
+        this.offlineNotice.classList.toggle('hidden', isOnline);
         
         // Show notification
         this.showNotification({
-            title: this.isOnline ? 'Online Mode Activated' : 'Offline Mode Activated',
-            message: this.isOnline ? 
+            title: isOnline ? 'Online Mode' : 'Offline Mode',
+            message: isOnline ? 
                 'All features are now available' : 
-                'Some features may be limited',
-            type: this.isOnline ? 'success' : 'info'
+                'Limited features available in offline mode',
+            type: isOnline ? 'success' : 'warning'
         });
 
-        // If manual toggle, simulate network status
-        if (!isAutomatic) {
-            if (this.isOnline) {
-                this.enableNetwork();
-            } else {
-                this.disableNetwork();
-            }
+        // Update Service Worker
+        if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+            navigator.serviceWorker.controller.postMessage({
+                type: isOnline ? 'ENABLE_NETWORK' : 'DISABLE_NETWORK'
+            });
         }
-    }
-
-    enableNetwork() {
-        // Re-enable network requests
-        navigator.serviceWorker.ready.then(registration => {
-            registration.active.postMessage({
-                type: 'ENABLE_NETWORK'
-            });
-        });
-    }
-
-    disableNetwork() {
-        // Disable network requests via Service Worker
-        navigator.serviceWorker.ready.then(registration => {
-            registration.active.postMessage({
-                type: 'DISABLE_NETWORK'
-            });
-        });
     }
 
     showNotification({ title, message, type }) {
@@ -259,33 +249,6 @@ class NetworkModeManager {
             notification.classList.remove('show');
             setTimeout(() => notification.remove(), 300);
         }, 3000);
-    }
-
-    createBubbles() {
-        const bubbleContainer = document.querySelector('.floating-bubbles');
-        const bubbleCount = 15;
-
-        for (let i = 0; i < bubbleCount; i++) {
-            const bubble = document.createElement('div');
-            bubble.className = 'bubble';
-            
-            // Random properties
-            const size = Math.random() * 30 + 10;
-            const duration = Math.random() * 10 + 15;
-            const startPosition = Math.random() * 100;
-            
-            bubble.style.cssText = `
-                --size: ${size}px;
-                --duration: ${duration}s;
-                top: ${startPosition}%;
-                left: ${Math.random() * 100}%;
-                width: var(--size);
-                height: var(--size);
-                animation-delay: -${Math.random() * duration}s;
-            `;
-            
-            bubbleContainer.appendChild(bubble);
-        }
     }
 }
 
