@@ -2,10 +2,11 @@
     "name": "Weather & Location Tracker",
     "short_name": "Weather Track",
     "description": "Track weather, capture photos, and record location history",
-    "start_url": "/",
+    "start_url": "/ArtunProgressive-mobile-application/",
+    "scope": "/ArtunProgressive-mobile-application/",
     "display": "standalone",
     "background_color": "#ffffff",
-    "theme_color": "#2196f3",
+    "theme_color": "#1a73e8",
     "icons": [
         {
             "src": "images/icons/icon-72x72.png",

@@ -1,22 +1,24 @@
 const CACHE_NAME = 'weather-tracker-v1';
 const DYNAMIC_CACHE = 'dynamic-cache-v1';
 
+const BASE_PATH = '/ArtunProgressive-mobile-application';
+
 const STATIC_ASSETS = [
-    '/',
-    '/index.html',
-    '/css/style.css',
-    '/js/app.js',
-    '/manifest.json',
-    '/images/icons/icon-72x72.png',
-    '/images/icons/icon-96x96.png',
-    '/images/icons/icon-128x128.png',
-    '/images/icons/icon-144x144.png',
-    '/images/icons/icon-152x152.png',
-    '/images/icons/icon-192x192.png',
-    '/images/icons/icon-384x384.png',
-    '/images/icons/icon-512x512.png',
-    'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css',
-    '/offline.html'
+    `${BASE_PATH}/`,
+    `${BASE_PATH}/index.html`,
+    `${BASE_PATH}/css/style.css`,
+    `${BASE_PATH}/js/app.js`,
+    `${BASE_PATH}/manifest.json`,
+    `${BASE_PATH}/images/icons/icon-72x72.png`,
+    `${BASE_PATH}/images/icons/icon-96x96.png`,
+    `${BASE_PATH}/images/icons/icon-128x128.png`,
+    `${BASE_PATH}/images/icons/icon-144x144.png`,
+    `${BASE_PATH}/images/icons/icon-152x152.png`,
+    `${BASE_PATH}/images/icons/icon-192x192.png`,
+    `${BASE_PATH}/images/icons/icon-384x384.png`,
+    `${BASE_PATH}/images/icons/icon-512x512.png`,
+    `${BASE_PATH}/offline.html`,
+    'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css'
 ];
 
 const OFFLINE_FALLBACK = {
@@ -123,7 +125,7 @@ self.addEventListener('fetch', (event) => {
                     .catch(() => {
                         // Return offline page for navigation requests
                         if (event.request.mode === 'navigate') {
-                            return caches.match('/offline.html');
+                            return caches.match(`${BASE_PATH}/offline.html`);
                         }
                     });
             })
@@ -144,8 +146,8 @@ self.addEventListener('sync', (event) => {
 self.addEventListener('push', (event) => {
     const options = {
         body: event.data ? event.data.text() : 'New Update Available',
-        icon: '/images/icons/icon-192x192.png',
-        badge: '/images/icons/icon-72x72.png',
+        icon: `${BASE_PATH}/images/icons/icon-192x192.png`,
+        badge: `${BASE_PATH}/images/icons/icon-72x72.png`,
         vibrate: [100, 50, 100],
         data: {
             dateOfArrival: Date.now(),
@@ -155,12 +157,12 @@ self.addEventListener('push', (event) => {
             {
                 action: 'explore',
                 title: 'View Details',
-                icon: '/images/icons/icon-96x96.png'
+                icon: `${BASE_PATH}/images/icons/icon-96x96.png`
             },
             {
                 action: 'close',
                 title: 'Close',
-                icon: '/images/icons/icon-96x96.png'
+                icon: `${BASE_PATH}/images/icons/icon-96x96.png`
             }
         ]
     };
