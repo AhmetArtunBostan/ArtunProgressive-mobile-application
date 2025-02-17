@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offline - Weather & Location Tracker</title>
+    <style>
+        :root {
+            --primary-color: #1a73e8;
+            --background-color: #f8f9fa;
+            --text-primary: #202124;
+            --text-secondary: #5f6368;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Google Sans', 'Segoe UI', Roboto, Arial, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .offline-container {
+            max-width: 600px;
+            padding: 2rem;
+        }
+
+        .icon {
+            width: 120px;
+            height: 120px;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        p {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+
+        .retry-button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .retry-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .stored-data {
+            margin-top: 2rem;
+            padding: 1rem;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .stored-data h2 {
+            color: var(--primary-color);
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+
+        #offlineData {
+            color: var(--text-secondary);
+        }
+    </style>
+</head>
+<body>
+    <div class="offline-container">
+        <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="1" y1="1" x2="23" y2="23"></line>
+            <path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"></path>
+            <path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"></path>
+            <path d="M10.71 5.05A16 16 0 0 1 22.58 9"></path>
+            <path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"></path>
+            <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
+            <line x1="12" y1="20" x2="12.01" y2="20"></line>
+        </svg>
+        
+        <h1>You're Offline</h1>
+        <p>Don't worry! You can still access your saved data and continue using some features of the app offline.</p>
+        
+        <button class="retry-button" onclick="window.location.reload()">
+            Try Again
+        </button>
+
+        <div class="stored-data">
+            <h2>Your Saved Data</h2>
+            <div id="offlineData">Loading stored data...</div>
+        </div>
+    </div>
+
+    <script>
+        // Display stored data from localStorage
+        window.addEventListener('load', () => {
+            const offlineData = document.getElementById('offlineData');
+            let content = '';
+
+            // Get stored weather data
+            const weatherData = localStorage.getItem('lastWeather');
+            if (weatherData) {
+                const weather = JSON.parse(weatherData);
+                content += `<p>Last Weather: ${weather.main.temp}°C, ${weather.weather[0].description}</p>`;
+            }
+
+            // Get stored locations
+            const locations = localStorage.getItem('locations');
+            if (locations) {
+                const locationList = JSON.parse(locations);
+                content += '<p>Last Known Locations:</p>';
+                locationList.slice(0, 3).forEach(loc => {
+                    content += `<p>Lat: ${loc.lat}, Lon: ${loc.lon}</p>`;
+                });
+            }
+
+            // Get stored photos
+            const photos = localStorage.getItem('photos');
+            if (photos) {
+                const photoList = JSON.parse(photos);
+                content += `<p>Stored Photos: ${photoList.length}</p>`;
+            }
+
+            offlineData.innerHTML = content || 'No stored data available';
+        });
+    </script>
+</body>
+</html>

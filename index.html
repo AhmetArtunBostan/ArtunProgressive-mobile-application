@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#1a73e8">
+    <title>Weather & Location Tracker</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="apple-touch-icon" href="images/icons/icon-192x192.png">
+</head>
+<body>
+    <!-- Enhanced Background -->
+    <div class="background-container">
+        <div class="aurora-container"></div>
+        <div class="glass-panel"></div>
+        <div class="floating-bubbles"></div>
+    </div>
+
+    <!-- Network Mode Toggle -->
+    <div class="network-mode-toggle">
+        <div class="mode-switch" id="networkModeSwitch">
+            <div class="mode-indicator"></div>
+        </div>
+        <div class="mode-label">Online Mode</div>
+    </div>
+
+    <!-- Offline Notice -->
+    <div id="offlineNotice" class="offline-notice hidden">
+        <i class="fas fa-wifi-slash"></i>
+        <div class="offline-notice-content">
+            <div class="offline-notice-title">You're Offline</div>
+            <div class="offline-notice-message">Limited features available in offline mode</div>
+        </div>
+        <button class="offline-notice-action" onclick="window.location.reload()">
+            <i class="fas fa-sync-alt"></i> Retry
+        </button>
+    </div>
+
+    <div id="app">
+        <nav class="navbar">
+            <div class="nav-brand">
+                <i class="fas fa-cloud-sun"></i>
+                Weather & Location Tracker
+            </div>
+            <div class="nav-menu">
+                <button id="installBtn" class="install-button hidden">
+                    <i class="fas fa-download"></i> Install App
+                </button>
+            </div>
+        </nav>
+
+        <main class="container">
+            <!-- Weather View -->
+            <section id="weatherView" class="view active">
+                <div class="section-header">
+                    <h2>Current Weather</h2>
+                    <p>Real-time weather information for your location</p>
+                </div>
+
+                <div class="weather-card">
+                    <div id="weatherInfo" class="weather-info">
+                        <div class="loading">
+                            <div class="loading-spinner"></div>
+                            <div class="loading-text">Loading weather data...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <button id="refreshWeather" class="btn primary">
+                    <i class="fas fa-sync-alt"></i> Refresh
+                </button>
+            </section>
+
+            <!-- Camera View -->
+            <section id="cameraView" class="view">
+                <div class="camera-header">
+                    <h2>Camera</h2>
+                    <div class="camera-controls-top">
+                        <button class="camera-control-btn" id="switchCamera" title="Switch Camera">
+                            <i class="fas fa-camera-rotate"></i>
+                        </button>
+                        <button class="camera-control-btn" id="flashControl" title="Toggle Flash">
+                            <i class="fas fa-bolt"></i>
+                        </button>
+                        <button class="camera-control-btn" id="filterControl" title="Photo Filters">
+                            <i class="fas fa-wand-magic-sparkles"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="camera-container">
+                    <div class="camera-wrapper">
+                        <video id="camera" autoplay playsinline></video>
+                        <canvas id="photoCanvas" class="hidden"></canvas>
+                        
+                        <div class="camera-overlay">
+                            <div class="focus-ring"></div>
+                            <div class="camera-grid">
+                                <div class="grid-line horizontal"></div>
+                                <div class="grid-line horizontal"></div>
+                                <div class="grid-line vertical"></div>
+                                <div class="grid-line vertical"></div>
+                            </div>
+                        </div>
+
+                        <div class="camera-info">
+                            <span class="camera-mode">
+                                <i class="fas fa-camera"></i> Photo Mode
+                            </span>
+                            <span class="camera-resolution">
+                                <i class="fas fa-expand"></i> HD
+                            </span>
+                        </div>
+
+                        <div class="filters-panel hidden">
+                            <div class="filter-option" data-filter="none">Normal</div>
+                            <div class="filter-option" data-filter="grayscale">B&W</div>
+                            <div class="filter-option" data-filter="sepia">Sepia</div>
+                            <div class="filter-option" data-filter="vintage">Vintage</div>
+                            <div class="filter-option" data-filter="blur">Blur</div>
+                        </div>
+                    </div>
+
+                    <div class="camera-controls-bottom">
+                        <button class="camera-control-btn gallery-btn" id="openGallery">
+                            <i class="fas fa-images"></i>
+                        </button>
+                        <button class="capture-btn" id="captureBtn">
+                            <div class="capture-btn-inner"></div>
+                        </button>
+                        <button class="camera-control-btn timer-btn" id="timerBtn">
+                            <i class="fas fa-stopwatch"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="photo-gallery-container">
+                    <div class="gallery-header">
+                        <h3>Photo Gallery</h3>
+                        <button class="gallery-view-btn" id="toggleGalleryView">
+                            <i class="fas fa-grid-2"></i>
+                        </button>
+                    </div>
+                    <div class="photo-gallery" id="photoGallery"></div>
+                </div>
+            </section>
+
+            <!-- Location History View -->
+            <section id="locationView" class="view">
+                <div class="location-header">
+                    <h2>Location History</h2>
+                    <p>Track and view your location history with real-time updates</p>
+                </div>
+                <div id="locationHistory" class="location-list"></div>
+            </section>
+        </main>
+
+        <footer class="nav-tabs">
+            <button class="tab-btn active" data-view="weatherView">
+                <i class="fas fa-cloud-sun"></i>
+                Weather
+            </button>
+            <button class="tab-btn" data-view="cameraView">
+                <i class="fas fa-camera"></i>
+                Camera
+            </button>
+            <button class="tab-btn" data-view="locationView">
+                <i class="fas fa-map-marker-alt"></i>
+                Location
+            </button>
+        </footer>
+    </div>
+
+    <script src="js/app.js" type="module"></script>
+</body>
+</html>
